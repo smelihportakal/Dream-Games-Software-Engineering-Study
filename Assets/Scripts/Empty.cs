@@ -6,4 +6,10 @@ public class Empty : CellItem
     public override void OnTap() {
         // Obstacles don't react to taps
     }
+    
+    public override void Clear()
+    {
+
+    }
+
 }

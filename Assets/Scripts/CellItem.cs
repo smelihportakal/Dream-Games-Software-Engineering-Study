@@ -4,6 +4,7 @@ using UnityEngine;
 public enum ItemType {
     Cube,
     TNT,
+    Bomb,
     Obstacle,
     Empty
 }
@@ -11,22 +12,35 @@ public enum ItemType {
 [RequireComponent(typeof(SpriteRenderer))] 
 public abstract class CellItem : MonoBehaviour
 {
+    public int x;
+    public int y;
     public ItemType type;
     private bool idle = true;
+    public bool IsBeingCleared { get;  set; }
+
     public CellItem(ItemType type) {
         this.type = type;
+        this.IsBeingCleared = false;
+    }
+
+    public void setCoordinate(int x , int y)
+    {
+        this.x = x;
+        this.y = y;
     }
     
     public abstract void OnTap();
+    
+    public abstract void Clear();
 
     public ItemType GetItemType()
     {
         return type;
     }
 
-    public bool GetIdle()
+    public bool IsAvailable()
     {
-        return idle;
+        return IsBeingCleared;
     }
     
     public IEnumerator MoveToPosition(Vector3 targetPosition)
@@ -46,6 +60,26 @@ public abstract class CellItem : MonoBehaviour
         } while (howfar != 1);
 
         idle = true;
+    }
+    
+    public IEnumerator MoveToPositionAndDestroy(Vector3 targetPosition, float speed)
+    {
+        Vector3 from = transform.position;
+        Vector3 to = targetPosition;
+        float howfar = 0;
+        idle = false;
+        do
+        {
+            howfar += speed * Time.deltaTime;
+            if (howfar > 1)
+                howfar = 1;
+            
+            transform.position = Vector3.LerpUnclamped(from, to, Easing(howfar));
+            yield return null;
+        } while (howfar != 1);
+
+        idle = true;
+        Destroy(gameObject);
     }
     
     private float Easing(float t)

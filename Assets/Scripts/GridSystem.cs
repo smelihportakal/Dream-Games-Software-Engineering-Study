@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 public class GridSystem2D<T> {
-    readonly int width;
-    readonly int height;
+    public int width;
+    public int height;
     readonly float cellSizeX;
     readonly float cellSizeY;
     readonly Vector3 origin;

@@ -18,4 +18,9 @@ public abstract class Obstacle : CellItem
     protected virtual void Destroy() {
         // Logic to handle destruction of the obstacle
     }
+    
+    public override void Clear()
+    {
+
+    }
 }
