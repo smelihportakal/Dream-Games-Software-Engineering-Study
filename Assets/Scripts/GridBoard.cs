@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -13,8 +14,8 @@ public class GridBoard : MonoBehaviour
     [SerializeField] float cellSizeY = 0.81f;
     Vector3 originPosition;
     [SerializeField] bool debug = true;
-
-    [SerializeField] GameObject[] cellItemPrefabs; 
+    public GameObject[] cellItemPrefabs; 
+    public string[] keys;
     [SerializeField] CellItemType[] cellItemTypes;
     public GameObject tntPrefab;
     public GridSystem2D<CellItem> grid;
@@ -22,6 +23,20 @@ public class GridBoard : MonoBehaviour
 
     public bool IsAnimationContinue;
     //private Empty emptyCell;
+
+    public TextAsset textJson;
+    
+    [System.Serializable]
+    public class Level
+    {
+        public int level_number;
+        public int grid_width;
+        public int grid_height;
+        public int move_count;
+        public string[] grid;
+    }
+
+    public Level level = new Level();
 
     public static GridBoard Instance {get; private set; }
     
@@ -39,6 +54,7 @@ public class GridBoard : MonoBehaviour
 
     private void Start()
     {
+        level = JsonUtility.FromJson<Level>(textJson.text);
         InitializeGrid();
         FindBombableCubes();
         IsAnimationContinue = false;
@@ -48,47 +64,79 @@ public class GridBoard : MonoBehaviour
     {
         originPosition = GetOriginPosition();
         grid = GridSystem2D<CellItem>.VerticalGrid(width, height, cellSizeX, cellSizeY, originPosition, debug);
-
-        for (int x = 0; x < width; x++)
+        int i = 0;
+        for (int y = 0; y < height; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
             {
-                CreateCellItem(x, y);
+                CreateCellItem(x, y, level.grid[i]);
+                i++;
             }
         }
-
     }
-
+    
     public IEnumerator PopulateGrid()
     {
         IsAnimationContinue = true;
-        for (int y= 0; y <height; y++)
-            for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
+            for (int y= height -1 ; y >= 0; y--)
             {
-                if (grid.GetValue(x, y) == null || grid.GetValue(x, y) == default) {
-                    int rn = Random.Range(0, cellItemPrefabs.Length);
-                    GameObject cellObject = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, y) + new Vector3(0,10, 0 ), Quaternion.identity,
-                        transform);
-                    //cellItem.SetType(cellItemTypes[rn]);
-                    grid.SetValue(x,y,cellObject.GetComponent<Cube>());
-                    grid.GetValue(x,y).setCoordinate(x,y);
-                    StartCoroutine(grid.GetValue(x,y).MoveToPosition(grid.GetWorldPositionCenter(x, y)));
-                    yield return null;
+                if (grid.GetValue(x, y) != null && grid.GetValue(x, y) != default)
+                {
+                    
+                    for (int yempty = y + 1; yempty < height; yempty++)
+                    {
+                        if (grid.GetValue(x, yempty) == null || grid.GetValue(x, yempty) == default) {
+                            Debug.Log("heyyo");
+                            int rn = Random.Range(0, 4);
+                            GameObject cellObject = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, yempty) + new Vector3(0,10, 0 ), Quaternion.identity,
+                                transform);
+                            //cellItem.SetType(cellItemTypes[rn]);
+                            grid.SetValue(x,yempty,cellObject.GetComponent<Cube>());
+                            grid.GetValue(x,yempty).setCoordinate(x,yempty);
+                            StartCoroutine(grid.GetValue(x,yempty).MoveToPosition(grid.GetWorldPositionCenter(x, yempty)));
+                            yield return null;
+                        }
+                    }
                 }
             }
         IsAnimationContinue = false;
         FindBombableCubes();
     }
 
-    void CreateCellItem(int x, int y)
+    void CreateCellItem(int x, int y, string key)
     {
         //TODO
-        int rn = Random.Range(0, cellItemPrefabs.Length);
-        GameObject cellItem = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
-            transform);
-        //cellItem.SetType(cellItemTypes[rn]);
-        grid.SetValue(x,y,cellItem.GetComponent<Cube>());
-        grid.GetValue(x,y).setCoordinate(x,y);
+        if (key == "bo")
+        {
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+                transform);
+            grid.SetValue(x,y,cellItem.GetComponent<Box>());
+            grid.GetValue(x,y).setCoordinate(x,y);
+        }
+        else if (key == "v")
+        {
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+                transform);
+            grid.SetValue(x,y,cellItem.GetComponent<Vase>());
+            grid.GetValue(x,y).setCoordinate(x,y);
+        }
+        else if (key == "s")
+        {
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+                transform);
+            grid.SetValue(x,y,cellItem.GetComponent<Stone>());
+            grid.GetValue(x,y).setCoordinate(x,y);
+        }
+        else
+        {
+            int rn = Random.Range(0, 4);
+            GameObject cellItem = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+                transform);
+            //cellItem.SetType(cellItemTypes[rn]);
+            grid.SetValue(x,y,cellItem.GetComponent<Cube>());
+            grid.GetValue(x,y).setCoordinate(x,y);
+        }
     }
     
     Vector3 GetOriginPosition()
@@ -134,7 +182,7 @@ public class GridBoard : MonoBehaviour
                 {
                     if (y >= 0 && y < grid.height)
                     {
-                        if (grid.GetValue(x, y) != null)
+                        if (grid.GetValue(x, y) != null && !grid.GetValue(x, y).IsBeingCleared)
                         {
                             Debug.Log("bomb");
                             grid.GetValue(x, y).Clear();
@@ -146,28 +194,38 @@ public class GridBoard : MonoBehaviour
 
     }
 
-    public List<CellItem> getAdjacentItems(int x, int y)
+    public void getAdjacentItems(int x, int y, ref HashSet<CellItem> adjacentItems)
     {
-        List<CellItem> cellItems = new List<CellItem>();
 
         if (x>= 0 && y-1 >= 0)
         {
-            cellItems.Add(grid.GetValue(x,y-1));
+            if (grid.GetValue(x, y - 1) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x,y-1));
+            }
         }
         if (x >= 0 && y + 1 < height)
         {
-            cellItems.Add(grid.GetValue(x,y+1));
+            if (grid.GetValue(x, y + 1) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x,y+1));
+            }
         }
         if (x - 1 >= 0 && y >= 0)
         {
-            cellItems.Add(grid.GetValue(x-1,y));
+            if (grid.GetValue(x-1,y) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x-1,y));
+
+            }
         } 
         if (x + 1 < width && y  < height)
         {
-            cellItems.Add(grid.GetValue(x+1,y));
+            if (grid.GetValue(x+1, y) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x+1,y));
+            }
         }
-        
-        return cellItems;
     }
     
     void ChangeSprite(int x, int y)
@@ -205,33 +263,80 @@ public class GridBoard : MonoBehaviour
 
         if (connectedCubes.Count <= 1)
         {
+            
             return;
         }
-        
+        HashSet<CellItem> adjacentItems = new HashSet<CellItem>();
+        getAdjacentItems(tappedCellItem.x,tappedCellItem.y,ref adjacentItems);
+
         if (connectedCubes.Count >= 5)
         {
             if (connectedCubes.Contains(tappedCellItem))
             {
                 connectedCubes.Remove(tappedCellItem);
+                foreach (var item in connectedCubes)
+                {
+                    getAdjacentItems(item.x,item.y,ref adjacentItems);
+                    grid.SetValue(item.x,item.y, null);
+                    StartCoroutine(item.MoveToPositionAndDestroy(grid.GetWorldPositionCenter(x, y),3));
+                }
+
+                foreach (var item in connectedCubes)
+                {
+                    if (adjacentItems.Contains(item))
+                    {
+                        adjacentItems.Remove(item);
+                    }
+                }
+                
+                if (adjacentItems.Contains(tappedCellItem))
+                {
+                    adjacentItems.Remove(tappedCellItem);
+                }
                 GameObject cellItem = Instantiate(tntPrefab, grid.GetWorldPositionCenter(x, y), Quaternion.identity,
                     transform);
                 //cellItem.SetType(cellItemTypes[rn]);
                 Destroy(tappedCellItem.gameObject); //TODO
                 grid.SetValue(x,y, cellItem.GetComponent<TNT>());
                 grid.GetValue(x,y).setCoordinate(x,y);
+                foreach (var item in adjacentItems)
+                {
+                    Debug.Log(item);
+                    item.ClearOnNear();
+                }
+                return;
             }
             else
             {
                 Debug.Log("onject not exist");
             }
-            
         }
         
-        // Destroy connected cubes
         foreach (var item in connectedCubes)
         {
+            getAdjacentItems(item.x,item.y,ref adjacentItems);
             item.Clear();
         }
+        
+        foreach (var item in connectedCubes)
+        {
+            if (adjacentItems.Contains(item))
+            {
+                adjacentItems.Remove(item);
+            }
+        }
+        
+        if (adjacentItems.Contains(tappedCellItem))
+        {
+            adjacentItems.Remove(tappedCellItem);
+        }
+        
+        foreach (var item in adjacentItems)
+        {
+            Debug.Log(item);
+            item.ClearOnNear();
+        }
+        // Destroy connected cubes
         // Handle grid update (optional)
         // Implement score calculation (optional)
     }
@@ -343,6 +448,10 @@ public class GridBoard : MonoBehaviour
                     {
                         if (grid.GetValue(x, yNotEmpty) != null && grid.GetValue(x, yNotEmpty) != default ) 
                         {
+                            if (!grid.GetValue(x, yNotEmpty).moveable)
+                            {
+                                break;
+                            }
                             //Debug.Log("(" + x + "," + yNotEmpty + ") to ("  + x + "," + yEmpty + ")");
                             MoveItemToPosition(grid.GetValue(x, yNotEmpty), x, yEmpty);
                             break;

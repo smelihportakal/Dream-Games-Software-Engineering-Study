@@ -97,7 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b9659915294eee82af9d2f2b691b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  x: 0
+  y: 0
   type: 0
+  moveable: 1
   normalState: {fileID: 21300000, guid: 920e1a813b47440e89d13d3c3c3f2665, type: 3}
   bombState: {fileID: 21300000, guid: 1fd77086cc4a04e8f91ee29096cea370, type: 3}
   cubeType: 2

@@ -1,6 +1,6 @@
 public abstract class Obstacle : CellItem
 {
-    protected int health;
+    public int health;
 
     public Obstacle(ItemType type) : base(ItemType.Obstacle) {}
 
@@ -8,19 +8,13 @@ public abstract class Obstacle : CellItem
         // Obstacles don't react to taps
     }
 
-    public virtual void TakeDamage(int damage) {
-        health -= damage;
-        if (health <= 0) {
-            Destroy();
-        }
-    }
+    public abstract void TakeDamage(int damage);
 
-    protected virtual void Destroy() {
+    protected virtual void Destroyy() {
         // Logic to handle destruction of the obstacle
+        
     }
     
-    public override void Clear()
-    {
 
-    }
+    
 }

@@ -16,6 +16,7 @@ public abstract class CellItem : MonoBehaviour
     public int y;
     public ItemType type;
     private bool idle = true;
+    public bool moveable;
     public bool IsBeingCleared { get;  set; }
 
     public CellItem(ItemType type) {
@@ -92,4 +93,8 @@ public abstract class CellItem : MonoBehaviour
             : (Mathf.Pow(t * 2 - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
     }
 
+    public virtual void ClearOnNear()
+    {
+        
+    }
 }

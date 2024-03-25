@@ -10,7 +10,9 @@ public class TNT : Bomb
     public override void OnTap() {
         // Logic for TNT tapping
         // Explode in a 5x5 area
-        List<CellItem> adjacentItems = GridBoard.Instance.getAdjacentItems(x,y);
+        HashSet<CellItem> adjacentItems = new HashSet<CellItem>();
+        
+        GridBoard.Instance.getAdjacentItems(x,y,ref adjacentItems);
 
         bool isComboTnt = false;
         

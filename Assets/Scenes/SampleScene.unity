@@ -264,7 +264,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.03
   far clip plane: 1000
   field of view: 60
   orthographic: 1
@@ -458,8 +458,27 @@ MonoBehaviour:
   - {fileID: 363720874850660096, guid: b2be1a08f4de142aaa3f6fd66dc444b6, type: 3}
   - {fileID: 7656442527651134225, guid: 60e0516967f404d388543e0c669596a7, type: 3}
   - {fileID: 6511650590443210752, guid: 08120b5833b7d48fd9515ae786120533, type: 3}
+  - {fileID: 3974863732090681626, guid: 9e010a721f05043f5bd49dedd9cd157d, type: 3}
+  - {fileID: 5177889957902928907, guid: 9f74a786e0c6c41cf8ebc32090bc7a2d, type: 3}
+  - {fileID: 5209388241058904294, guid: b53672107bfc8407c80c408459ce53ca, type: 3}
+  keys:
+  - b
+  - g
+  - r
+  - y
+  - bo
+  - v
+  - s
   cellItemTypes: []
   tntPrefab: {fileID: 666242905806885371, guid: 66b32274f8a5d44ec9a3834d3c5d6967, type: 3}
+  IsAnimationContinue: 0
+  textJson: {fileID: 4900000, guid: f9daf7f214501428388f0d4c23612a0e, type: 3}
+  level:
+    level_number: 0
+    grid_width: 0
+    grid_height: 0
+    move_count: 0
+    grid: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
