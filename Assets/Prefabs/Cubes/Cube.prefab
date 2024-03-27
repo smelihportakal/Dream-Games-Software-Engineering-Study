@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 981908151308676152}
   - component: {fileID: -2035019768955865106}
   m_Layer: 0
-  m_Name: Blue Cube
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,3 +104,26 @@ MonoBehaviour:
   normalState: {fileID: 21300000, guid: 920e1a813b47440e89d13d3c3c3f2665, type: 3}
   bombState: {fileID: 21300000, guid: 1fd77086cc4a04e8f91ee29096cea370, type: 3}
   cubeType: 2
+  particle: {fileID: 1653060786129538807, guid: c3b17e8b945784730a4731403628c46d, type: 3}
+  currentCubeColor:
+    colorCode: b
+    cubeType: 2
+    normalState: {fileID: 21300000, guid: 920e1a813b47440e89d13d3c3c3f2665, type: 3}
+    bombState: {fileID: 21300000, guid: 1fd77086cc4a04e8f91ee29096cea370, type: 3}
+  cubeColors:
+  - colorCode: b
+    cubeType: 2
+    normalState: {fileID: 21300000, guid: 920e1a813b47440e89d13d3c3c3f2665, type: 3}
+    bombState: {fileID: 21300000, guid: 1fd77086cc4a04e8f91ee29096cea370, type: 3}
+  - colorCode: g
+    cubeType: 3
+    normalState: {fileID: 21300000, guid: 633272a9be82f48f7a9ad244c1a26587, type: 3}
+    bombState: {fileID: 21300000, guid: 94368a292951a4b75b12f643f0e372c1, type: 3}
+  - colorCode: r
+    cubeType: 1
+    normalState: {fileID: 21300000, guid: ca9bd524ac0db44d2b125d7a88535775, type: 3}
+    bombState: {fileID: 21300000, guid: 098fc51ce0a4c44d9addffbbb5d5bd8d, type: 3}
+  - colorCode: y
+    cubeType: 0
+    normalState: {fileID: 21300000, guid: 53f0e1c4508bc4d05bc0882a50787400, type: 3}
+    bombState: {fileID: 21300000, guid: abb307228ebec4214aa23715e6ed5159, type: 3}

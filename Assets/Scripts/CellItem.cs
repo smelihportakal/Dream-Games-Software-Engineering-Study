@@ -12,6 +12,7 @@ public enum ItemType {
 [RequireComponent(typeof(SpriteRenderer))] 
 public abstract class CellItem : MonoBehaviour
 {
+    public string tag;
     public int x;
     public int y;
     public ItemType type;
@@ -63,7 +64,7 @@ public abstract class CellItem : MonoBehaviour
         idle = true;
     }
     
-    public IEnumerator MoveToPositionAndDestroy(Vector3 targetPosition, float speed)
+    public virtual IEnumerator MoveToPositionAndDestroy(Vector3 targetPosition, float speed)
     {
         Vector3 from = transform.position;
         Vector3 to = targetPosition;
@@ -80,10 +81,11 @@ public abstract class CellItem : MonoBehaviour
         } while (howfar != 1);
 
         idle = true;
+        //gameObject.SetActive(false);
         Destroy(gameObject);
     }
     
-    private float Easing(float t)
+    public float Easing(float t)
     {
         float c1 = 1.70158f,
             c2 = c1 * 1.525f;

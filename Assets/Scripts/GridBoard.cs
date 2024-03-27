@@ -5,8 +5,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[System.Serializable]
+public class CubeColor
+{
+    public string colorCode;
+    public CubeType cubeType;
+    public Sprite normalState;
+    public Sprite bombState;
+    public Material particleMaterial;
+}
 
-public class GridBoard : MonoBehaviour 
+public class GridBoard : MonoBehaviour
 {
     [SerializeField] int width = 8;
     [SerializeField] int height = 8;
@@ -14,7 +23,7 @@ public class GridBoard : MonoBehaviour
     [SerializeField] float cellSizeY = 0.81f;
     Vector3 originPosition;
     [SerializeField] bool debug = true;
-    public GameObject[] cellItemPrefabs; 
+    public GameObject[] cellItemPrefabs;
     public string[] keys;
     [SerializeField] CellItemType[] cellItemTypes;
     public GameObject tntPrefab;
@@ -25,7 +34,16 @@ public class GridBoard : MonoBehaviour
     //private Empty emptyCell;
 
     public TextAsset textJson;
-    
+
+    private ObjectPooler objectPooler;
+
+
+
+
+    public List<CubeColor> cubeColors;
+    public Dictionary<string, CubeColor> colorDictionary;
+
+
     [System.Serializable]
     public class Level
     {
@@ -38,22 +56,29 @@ public class GridBoard : MonoBehaviour
 
     public Level level = new Level();
 
-    public static GridBoard Instance {get; private set; }
-    
-    private void Awake() 
-    { 
-        if (Instance != null && Instance != this) 
-        { 
-            Destroy(this); 
-        } 
-        else 
-        { 
-            Instance = this; 
-        } 
+    public static GridBoard Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     private void Start()
     {
+        colorDictionary = new Dictionary<string, CubeColor>();
+        foreach (CubeColor cubeColor in cubeColors)
+        {
+            colorDictionary.Add(cubeColor.colorCode, cubeColor);
+        }
+
+        objectPooler = ObjectPooler.Instance;
         level = JsonUtility.FromJson<Level>(textJson.text);
         InitializeGrid();
         FindBombableCubes();
@@ -74,32 +99,40 @@ public class GridBoard : MonoBehaviour
             }
         }
     }
-    
+
     public IEnumerator PopulateGrid()
     {
         IsAnimationContinue = true;
         for (int x = 0; x < width; x++)
-            for (int y= height -1 ; y >= 0; y--)
+        for (int y = height - 1; y >= 0; y--)
+        {
+            if ((grid.GetValue(x, y) != null && grid.GetValue(x, y) != default) || y == 0)
             {
-                if (grid.GetValue(x, y) != null && grid.GetValue(x, y) != default)
+                int yempty = y + 1;
+                if (y == 0)
                 {
-                    
-                    for (int yempty = y + 1; yempty < height; yempty++)
+                    yempty = 0;
+                }
+
+                for (; yempty < height; yempty++)
+                {
+                    if (grid.GetValue(x, yempty) == null || grid.GetValue(x, yempty) == default)
                     {
-                        if (grid.GetValue(x, yempty) == null || grid.GetValue(x, yempty) == default) {
-                            Debug.Log("heyyo");
-                            int rn = Random.Range(0, 4);
-                            GameObject cellObject = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, yempty) + new Vector3(0,10, 0 ), Quaternion.identity,
-                                transform);
-                            //cellItem.SetType(cellItemTypes[rn]);
-                            grid.SetValue(x,yempty,cellObject.GetComponent<Cube>());
-                            grid.GetValue(x,yempty).setCoordinate(x,yempty);
-                            StartCoroutine(grid.GetValue(x,yempty).MoveToPosition(grid.GetWorldPositionCenter(x, yempty)));
-                            yield return null;
-                        }
+                        int rn = Random.Range(0, 4);
+                        GameObject cellItem =
+                            objectPooler.SpawnFromPool("cube",
+                                grid.GetWorldPositionCenter(x, yempty) + new Vector3(0, 10, 0), Quaternion.identity);
+                        grid.SetValue(x, yempty, cellItem.GetComponent<Cube>());
+                        ((Cube)grid.GetValue(x, yempty)).ChangeColor(
+                            colorDictionary[new string[] { "b", "g", "r", "y" }[rn]]);
+                        grid.GetValue(x, yempty).setCoordinate(x, yempty);
+                        StartCoroutine(grid.GetValue(x, yempty).MoveToPosition(grid.GetWorldPositionCenter(x, yempty)));
+                        yield return null;
                     }
                 }
             }
+        }
+
         IsAnimationContinue = false;
         FindBombableCubes();
     }
@@ -109,42 +142,56 @@ public class GridBoard : MonoBehaviour
         //TODO
         if (key == "bo")
         {
-            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)],
+                grid.GetWorldPositionCenter(x, y), Quaternion.identity,
                 transform);
-            grid.SetValue(x,y,cellItem.GetComponent<Box>());
-            grid.GetValue(x,y).setCoordinate(x,y);
+            grid.SetValue(x, y, cellItem.GetComponent<Box>());
+            grid.GetValue(x, y).setCoordinate(x, y);
         }
         else if (key == "v")
         {
-            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)],
+                grid.GetWorldPositionCenter(x, y), Quaternion.identity,
                 transform);
-            grid.SetValue(x,y,cellItem.GetComponent<Vase>());
-            grid.GetValue(x,y).setCoordinate(x,y);
+            grid.SetValue(x, y, cellItem.GetComponent<Vase>());
+            grid.GetValue(x, y).setCoordinate(x, y);
         }
         else if (key == "s")
         {
-            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+            GameObject cellItem = Instantiate(cellItemPrefabs[Array.IndexOf(keys, key)],
+                grid.GetWorldPositionCenter(x, y), Quaternion.identity,
                 transform);
-            grid.SetValue(x,y,cellItem.GetComponent<Stone>());
-            grid.GetValue(x,y).setCoordinate(x,y);
+            grid.SetValue(x, y, cellItem.GetComponent<Stone>());
+            grid.GetValue(x, y).setCoordinate(x, y);
+        }
+        else if (key == "rand")
+        {
+            int rn = Random.Range(0, 4);
+            GameObject cellItem =
+                objectPooler.SpawnFromPool("cube", grid.GetWorldPositionCenter(x, y), Quaternion.identity);
+            grid.SetValue(x, y, cellItem.GetComponent<Cube>());
+            ((Cube)grid.GetValue(x, y)).ChangeColor(colorDictionary[new string[] { "b", "g", "r", "y" }[rn]]);
+            grid.GetValue(x, y).setCoordinate(x, y);
         }
         else
         {
-            int rn = Random.Range(0, 4);
-            GameObject cellItem = Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
-                transform);
+            GameObject cellItem =
+                objectPooler.SpawnFromPool("cube", grid.GetWorldPositionCenter(x, y), Quaternion.identity);
+            //Instantiate(cellItemPrefabs[rn], grid.GetWorldPositionCenter(x, y), Quaternion.identity,
+            //transform);
             //cellItem.SetType(cellItemTypes[rn]);
-            grid.SetValue(x,y,cellItem.GetComponent<Cube>());
-            grid.GetValue(x,y).setCoordinate(x,y);
+            grid.SetValue(x, y, cellItem.GetComponent<Cube>());
+            ((Cube)grid.GetValue(x, y)).ChangeColor(colorDictionary[key]);
+            grid.GetValue(x, y).setCoordinate(x, y);
         }
     }
-    
+
     Vector3 GetOriginPosition()
     {
         return new Vector3(transform.position.x - width * cellSizeX / 2.0f,
             transform.position.y - height * cellSizeY / 2.0f, 0);
     }
-    
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && !IsAnimationContinue)
@@ -162,17 +209,18 @@ public class GridBoard : MonoBehaviour
         if (tappedCellItem == null)
             return;
 
-        if (tappedCellItem.GetItemType() == ItemType.Cube )
+        if (tappedCellItem.GetItemType() == ItemType.Cube)
         {
-            DestroyConnectedCubes(x,y);
+            DestroyConnectedCubes(x, y);
             CollapseGrid();
-        } else if (tappedCellItem.GetItemType() == ItemType.Bomb)
+        }
+        else if (tappedCellItem.GetItemType() == ItemType.Bomb)
         {
             tappedCellItem.OnTap();
         }
     }
-    
-    public void TriggerTnT(int posx,int posy, int size)
+
+    public void TriggerTnT(int posx, int posy, int size)
     {
         for (int x = posx - size; x <= posx + size; x++)
         {
@@ -182,10 +230,12 @@ public class GridBoard : MonoBehaviour
                 {
                     if (y >= 0 && y < grid.height)
                     {
-                        if (grid.GetValue(x, y) != null && !grid.GetValue(x, y).IsBeingCleared)
+                        if (grid.GetValue(x, y) != null)
                         {
+                            //&& !grid.GetValue(x, y).IsBeingCleared
                             Debug.Log("bomb");
                             grid.GetValue(x, y).Clear();
+                            //StartCoroutine(CubeParticleCoroutine(x,y));
                         }
                     }
                 }
@@ -197,77 +247,81 @@ public class GridBoard : MonoBehaviour
     public void getAdjacentItems(int x, int y, ref HashSet<CellItem> adjacentItems)
     {
 
-        if (x>= 0 && y-1 >= 0)
+        if (x >= 0 && y - 1 >= 0)
         {
             if (grid.GetValue(x, y - 1) != null)
             {
-                adjacentItems.Add(grid.GetValue(x,y-1));
+                adjacentItems.Add(grid.GetValue(x, y - 1));
             }
         }
+
         if (x >= 0 && y + 1 < height)
         {
             if (grid.GetValue(x, y + 1) != null)
             {
-                adjacentItems.Add(grid.GetValue(x,y+1));
+                adjacentItems.Add(grid.GetValue(x, y + 1));
             }
         }
+
         if (x - 1 >= 0 && y >= 0)
         {
-            if (grid.GetValue(x-1,y) != null)
+            if (grid.GetValue(x - 1, y) != null)
             {
-                adjacentItems.Add(grid.GetValue(x-1,y));
+                adjacentItems.Add(grid.GetValue(x - 1, y));
 
             }
-        } 
-        if (x + 1 < width && y  < height)
+        }
+
+        if (x + 1 < width && y < height)
         {
-            if (grid.GetValue(x+1, y) != null)
+            if (grid.GetValue(x + 1, y) != null)
             {
-                adjacentItems.Add(grid.GetValue(x+1,y));
+                adjacentItems.Add(grid.GetValue(x + 1, y));
             }
         }
     }
-    
+
     void ChangeSprite(int x, int y)
     {
         CellItem tappedCellItem = grid.GetValue(x, y);
         if (tappedCellItem == null)
             return;
-        
+
         if (tappedCellItem.type == ItemType.Cube)
         {
             tappedCellItem.OnTap();
         }
     }
-    
+
     void DestroyConnectedCubes(int x, int y)
     {
         CellItem tappedCellItem = grid.GetValue(x, y);
         if (tappedCellItem == null)
             return;
-        
-        if (tappedCellItem.GetItemType() != ItemType.Cube )
+
+        if (tappedCellItem.GetItemType() != ItemType.Cube)
         {
             return;
         }
 
         Cube tappedCube = (Cube)tappedCellItem;
-        
+
         CubeType targetType = tappedCube.cubeType;
-        
+
         bool[,] visited = new bool[width, height];
-        
+
         List<CellItem> connectedCubes = new List<CellItem>();
-        
+
         FindConnectedCubes(x, y, targetType, ref visited, ref connectedCubes);
 
         if (connectedCubes.Count <= 1)
         {
-            
+
             return;
         }
+
         HashSet<CellItem> adjacentItems = new HashSet<CellItem>();
-        getAdjacentItems(tappedCellItem.x,tappedCellItem.y,ref adjacentItems);
+        getAdjacentItems(tappedCellItem.x, tappedCellItem.y, ref adjacentItems);
 
         if (connectedCubes.Count >= 5)
         {
@@ -276,9 +330,9 @@ public class GridBoard : MonoBehaviour
                 connectedCubes.Remove(tappedCellItem);
                 foreach (var item in connectedCubes)
                 {
-                    getAdjacentItems(item.x,item.y,ref adjacentItems);
-                    grid.SetValue(item.x,item.y, null);
-                    StartCoroutine(item.MoveToPositionAndDestroy(grid.GetWorldPositionCenter(x, y),3));
+                    getAdjacentItems(item.x, item.y, ref adjacentItems);
+                    grid.SetValue(item.x, item.y, null);
+                    StartCoroutine(item.MoveToPositionAndDestroy(grid.GetWorldPositionCenter(x, y), 3));
                 }
 
                 foreach (var item in connectedCubes)
@@ -288,22 +342,24 @@ public class GridBoard : MonoBehaviour
                         adjacentItems.Remove(item);
                     }
                 }
-                
+
                 if (adjacentItems.Contains(tappedCellItem))
                 {
                     adjacentItems.Remove(tappedCellItem);
                 }
+
                 GameObject cellItem = Instantiate(tntPrefab, grid.GetWorldPositionCenter(x, y), Quaternion.identity,
                     transform);
                 //cellItem.SetType(cellItemTypes[rn]);
-                Destroy(tappedCellItem.gameObject); //TODO
-                grid.SetValue(x,y, cellItem.GetComponent<TNT>());
-                grid.GetValue(x,y).setCoordinate(x,y);
+                ObjectPooler.Instance.ReturnObjectToPool("cube", tappedCellItem.gameObject);
+                grid.SetValue(x, y, cellItem.GetComponent<TNT>());
+                grid.GetValue(x, y).setCoordinate(x, y);
                 foreach (var item in adjacentItems)
                 {
                     Debug.Log(item);
                     item.ClearOnNear();
                 }
+
                 return;
             }
             else
@@ -311,26 +367,27 @@ public class GridBoard : MonoBehaviour
                 Debug.Log("onject not exist");
             }
         }
-        
-        foreach (var item in connectedCubes)
+
+        foreach (CellItem item in connectedCubes)
         {
-            getAdjacentItems(item.x,item.y,ref adjacentItems);
+            getAdjacentItems(item.x, item.y, ref adjacentItems);
             item.Clear();
+            Debug.Log("why not working");
         }
-        
-        foreach (var item in connectedCubes)
+
+        foreach (CellItem item in connectedCubes)
         {
             if (adjacentItems.Contains(item))
             {
                 adjacentItems.Remove(item);
             }
         }
-        
+
         if (adjacentItems.Contains(tappedCellItem))
         {
             adjacentItems.Remove(tappedCellItem);
         }
-        
+
         foreach (var item in adjacentItems)
         {
             Debug.Log(item);
@@ -364,22 +421,23 @@ public class GridBoard : MonoBehaviour
         }
     }
 
-    void FindConnectedCubes(int x, int y,CubeType targetType, ref bool[,] visited, ref List<CellItem> connected)
+    void FindConnectedCubes(int x, int y, CubeType targetType, ref bool[,] visited, ref List<CellItem> connected)
     {
         if (x < 0 || y < 0 || x >= width || y >= height)
         {
             return;
         }
 
-        if (grid.GetValue(x,y) == null)
+        if (grid.GetValue(x, y) == null)
         {
             return;
         }
+
         if (connected.Contains(grid.GetValue(x, y)))
         {
             return;
         }
-        
+
         CellItem cellItem = grid.GetValue(x, y);
 
         if (cellItem != null && cellItem.GetItemType() == ItemType.Cube)
@@ -388,7 +446,7 @@ public class GridBoard : MonoBehaviour
             if (cellItem != null && cube.cubeType == targetType)
             {
                 connected.Add(cellItem);
-                
+
                 // Check adjacent cells recursively
                 FindConnectedCubes(x + 1, y, targetType, ref visited, ref connected);
                 FindConnectedCubes(x - 1, y, targetType, ref visited, ref connected);
@@ -397,8 +455,8 @@ public class GridBoard : MonoBehaviour
             }
         }
     }
-    
-    
+
+
     // Method to find all connected cubes
     List<List<CellItem>> FindAllConnectedCubes()
     {
@@ -412,10 +470,11 @@ public class GridBoard : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                if (grid.GetValue(x,y) == null)
-                {                              
-                    continue;          
-                }                              
+                if (grid.GetValue(x, y) == null)
+                {
+                    continue;
+                }
+
                 // Get the grid object at the current position
                 CellItem currentCellItem = grid.GetValue(x, y);
 
@@ -446,16 +505,17 @@ public class GridBoard : MonoBehaviour
                     //print(x + " " +yEmpty);
                     for (int yNotEmpty = yEmpty + 1; yNotEmpty < height; yNotEmpty++)
                     {
-                        if (grid.GetValue(x, yNotEmpty) != null && grid.GetValue(x, yNotEmpty) != default ) 
+                        if (grid.GetValue(x, yNotEmpty) != null && grid.GetValue(x, yNotEmpty) != default)
                         {
                             if (!grid.GetValue(x, yNotEmpty).moveable)
                             {
                                 break;
                             }
+
                             //Debug.Log("(" + x + "," + yNotEmpty + ") to ("  + x + "," + yEmpty + ")");
                             MoveItemToPosition(grid.GetValue(x, yNotEmpty), x, yEmpty);
                             break;
-                        }   
+                        }
                     }
                 }
             }
@@ -467,10 +527,10 @@ public class GridBoard : MonoBehaviour
     private void MoveItemToPosition(CellItem cellItem, int x, int y)
     {
         // remove the Item from its original grid position
-        grid.SetValue(cellItem.x,cellItem.y,null);
+        grid.SetValue(cellItem.x, cellItem.y, null);
         // place it the item at its new position
-        grid.SetValue(x,y,cellItem);
-        cellItem.setCoordinate(x,y);
+        grid.SetValue(x, y, cellItem);
+        cellItem.setCoordinate(x, y);
         // update the matchable's internal grid position
 
         // start animation to move it on screen
@@ -478,5 +538,35 @@ public class GridBoard : MonoBehaviour
 
         StartCoroutine(cellItem.MoveToPosition(grid.GetWorldPositionCenter(x, y)));
     }
+
+    public void StartCubeParticle(int x, int y, Material mat)
+    {
+        StartCoroutine(CubeParticleCoroutine(x, y, mat));
+    }
+
+    public IEnumerator CubeParticleCoroutine(int x, int y, Material mat)
+    {
+
+        GameObject particles = ObjectPooler.Instance.SpawnFromPool("cube_particle", grid.GetWorldPositionCenter(x, y), Quaternion.identity);
+        particles.GetComponent<ParticleSystemRenderer>().material = mat;
+        yield return new WaitForSecondsRealtime(1f);
+        Debug.Log("Particle deleted");
+
+        ObjectPooler.Instance.ReturnObjectToPool("cube_particle", particles);
+
+    }
     
+    public void StartTntParticle(int x, int y, GameObject prefab)
+    {
+        StartCoroutine(TntParticleCoroutine(x, y, prefab));
+    }
+
+    public IEnumerator TntParticleCoroutine(int x, int y, GameObject prefab )
+    {
+
+        GameObject particles = Instantiate(prefab, grid.GetWorldPositionCenter(x, y), Quaternion.identity, transform);
+        yield return new WaitForSecondsRealtime(1f);
+        Debug.Log("Particle deleted");
+        Destroy(particles);
+    }
 }

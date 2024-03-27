@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TNT : Bomb
 {
+    public GameObject TntParticle;
     public TNT(ItemType type) : base(ItemType.Bomb) {}
 
     public override void OnTap() {
@@ -64,8 +65,6 @@ public class TNT : Bomb
         IsBeingCleared = true;
         GridBoard.Instance.grid.SetValue(x,y, null);
         StartCoroutine(ClearCoroutine());
-        GridBoard.Instance.TriggerTnT(x,y, 2);
-        GridBoard.Instance.CollapseGrid();
     }
     
     private IEnumerator ClearCoroutine()
@@ -75,6 +74,10 @@ public class TNT : Bomb
             gameObject.transform.localScale += new Vector3(0.1f,0.1f,0);
             yield return new WaitForSeconds(0.1f);
         }
+        GridBoard.Instance.StartTntParticle(x,y,TntParticle);
+        GridBoard.Instance.TriggerTnT(x,y, 2);
+        GridBoard.Instance.CollapseGrid();
+
         Destroy(gameObject);
     }
 

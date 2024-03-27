@@ -9,6 +9,11 @@ public class Cube : CellItem
     public Sprite bombState;
     public CubeType cubeType;
     private int state = 0;
+    public GameObject particle;
+    public CubeColor currentCubeColor;
+    
+    public List<CubeColor> cubeColors;
+    public Dictionary<string, CubeColor> colorDictionary;
     
     public Cube(ItemType type, Sprite normalState, Sprite bombState, CubeType cubeType) : base(ItemType.Cube)
     {
@@ -17,7 +22,7 @@ public class Cube : CellItem
 
     public override void OnTap()
     {
-        GetComponent<SpriteRenderer>().sprite = bombState;
+        GetComponent<SpriteRenderer>().sprite = currentCubeColor.bombState;
     }
 
     public void changeState(int state)
@@ -25,32 +30,79 @@ public class Cube : CellItem
         this.state = state;
         if (this.state == 0)
         {
-            GetComponent<SpriteRenderer>().sprite = normalState;
+            GetComponent<SpriteRenderer>().sprite = currentCubeColor.normalState;
         }
         else
         {
-            GetComponent<SpriteRenderer>().sprite = bombState;
+            GetComponent<SpriteRenderer>().sprite = currentCubeColor.bombState;
         }
     }
     void Update()
     {
   
     }
-    
+
+    public void ChangeColor(CubeColor cubeColor)
+    {
+        currentCubeColor = cubeColor;
+        GetComponent<SpriteRenderer>().sprite = currentCubeColor.normalState;
+        cubeType = currentCubeColor.cubeType;
+    }
+
     public override void Clear()
     {
         IsBeingCleared = true;
         GridBoard.Instance.grid.SetValue(x,y, null);
-        StartCoroutine(ClearCoroutine());
+        GridBoard.Instance.StartCubeParticle(x,y, currentCubeColor.particleMaterial);
+        //StartCoroutine(GridBoard.Instance.CubeParticleCoroutine(x,y));
+        ObjectPooler.Instance.ReturnObjectToPool("cube", gameObject);
+        //Debug.Log("are you working");
+        
+        /*
+        ObjectPooler.Instance.ReturnObjectToPool("b",gameObject);
+
+        GameObject particles = ObjectPooler.Instance.SpawnFromPool("cube_particle",
+            GridBoard.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity);
+            
+        //yield return new WaitForSeconds(4f);
+        Debug.Log("Particle deleted");
+        ObjectPooler.Instance.ReturnObjectToPool("cube_particle", particles);
+        */
+
     }
 
     private IEnumerator ClearCoroutine()
     {
-        while (gameObject.transform.localScale.x < 1.5f)
-        {
-            gameObject.transform.localScale += new Vector3(0.1f,0.1f,0);
-            yield return null;
-        }
-        Destroy(gameObject);
+
+        GameObject particles = ObjectPooler.Instance.SpawnFromPool("cube_particle",
+            GridBoard.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity);
+        yield return new WaitForSecondsRealtime(1f);
+        Debug.Log("Particle deleted");
+        ObjectPooler.Instance.ReturnObjectToPool("cube",gameObject);
+
+        ObjectPooler.Instance.ReturnObjectToPool("cube_particle", particles);
+
     }
+    
+    public override IEnumerator  MoveToPositionAndDestroy(Vector3 targetPosition, float speed)
+    {
+        Vector3 from = transform.position;
+        Vector3 to = targetPosition;
+        float howfar = 0;
+        do
+        {
+            howfar += speed * Time.deltaTime;
+            if (howfar > 1)
+                howfar = 1;
+            
+            transform.position = Vector3.LerpUnclamped(from, to, Easing(howfar));
+            yield return null;
+        } while (howfar != 1);
+
+        ObjectPooler.Instance.ReturnObjectToPool("cube",gameObject);
+        Debug.Log("is it working");
+        //gameObject.SetActive(false);
+        //Destroy(gameObject);
+    }
+
 }
