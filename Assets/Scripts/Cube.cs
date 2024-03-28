@@ -56,14 +56,15 @@ public class Cube : CellItem
         GridBoard.Instance.StartCubeParticle(x,y, currentCubeColor.particleMaterial);
         //StartCoroutine(GridBoard.Instance.CubeParticleCoroutine(x,y));
         ObjectPooler.Instance.ReturnObjectToPool("cube", gameObject);
+        SoundManager.Instance.BoxDestroy();
         //Debug.Log("are you working");
-        
+
         /*
         ObjectPooler.Instance.ReturnObjectToPool("b",gameObject);
 
         GameObject particles = ObjectPooler.Instance.SpawnFromPool("cube_particle",
             GridBoard.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity);
-            
+
         //yield return new WaitForSeconds(4f);
         Debug.Log("Particle deleted");
         ObjectPooler.Instance.ReturnObjectToPool("cube_particle", particles);

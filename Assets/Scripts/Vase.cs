@@ -13,6 +13,7 @@ public class Vase : Obstacle
     public override void Clear()
     {
         TakeDamage(1);
+        SoundManager.Instance.PlayAudio("vase");
     }
     
     public override void ClearOnNear()

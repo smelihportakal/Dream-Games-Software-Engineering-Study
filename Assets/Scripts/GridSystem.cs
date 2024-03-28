@@ -1,5 +1,7 @@
 using System;
+using System.Drawing;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 public class GridSystem2D<T> {
     public int width;
@@ -67,6 +69,11 @@ public class GridSystem2D<T> {
 
     Vector3 GetWorldPosition(int x, int y) => coordinateConverter.GridToWorld(x, y, cellSizeX, cellSizeY, origin);
     
+    public Vector2 GetSizeOfGrid()
+    {
+        return new Vector2(width * cellSizeX + 0.35f, height * cellSizeY + 0.35f);
+    }
+    
     void DrawDebugLines() {
         const float duration = 100f;
         var parent = new GameObject("Debugging");
@@ -113,6 +120,8 @@ public class GridSystem2D<T> {
         }
     
         public override Vector3 Forward => Vector3.forward;
+
+
     }
     
     /// <summary>

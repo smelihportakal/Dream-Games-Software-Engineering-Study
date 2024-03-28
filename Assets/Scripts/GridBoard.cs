@@ -37,7 +37,9 @@ public class GridBoard : MonoBehaviour
 
     private ObjectPooler objectPooler;
 
+    private GoalManager goalManager;
 
+    public GameObject gridBackground;
 
 
     public List<CubeColor> cubeColors;
@@ -72,6 +74,7 @@ public class GridBoard : MonoBehaviour
 
     private void Start()
     {
+        goalManager = FindObjectOfType<GoalManager>();
         colorDictionary = new Dictionary<string, CubeColor>();
         foreach (CubeColor cubeColor in cubeColors)
         {
@@ -80,6 +83,9 @@ public class GridBoard : MonoBehaviour
 
         objectPooler = ObjectPooler.Instance;
         level = JsonUtility.FromJson<Level>(textJson.text);
+        width = level.grid_width;
+        height = level.grid_height;
+        goalManager.setMoveCount(level.move_count);
         InitializeGrid();
         FindBombableCubes();
         IsAnimationContinue = false;
@@ -98,6 +104,9 @@ public class GridBoard : MonoBehaviour
                 i++;
             }
         }
+        GameObject background = Instantiate(gridBackground, transform.position + new Vector3(0,0,2), Quaternion.identity);
+        background.GetComponent<SpriteRenderer>().size = grid.GetSizeOfGrid();
+
     }
 
     public IEnumerator PopulateGrid()
@@ -217,6 +226,7 @@ public class GridBoard : MonoBehaviour
         else if (tappedCellItem.GetItemType() == ItemType.Bomb)
         {
             tappedCellItem.OnTap();
+            goalManager.decreaseMoveCount(1);
         }
     }
 
@@ -359,6 +369,7 @@ public class GridBoard : MonoBehaviour
                     Debug.Log(item);
                     item.ClearOnNear();
                 }
+                goalManager.decreaseMoveCount(1);
 
                 return;
             }
@@ -393,6 +404,8 @@ public class GridBoard : MonoBehaviour
             Debug.Log(item);
             item.ClearOnNear();
         }
+        goalManager.decreaseMoveCount(1);
+
         // Destroy connected cubes
         // Handle grid update (optional)
         // Implement score calculation (optional)

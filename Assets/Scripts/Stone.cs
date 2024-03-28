@@ -20,6 +20,7 @@ public class Stone : Obstacle
         if (health <= 0) {
             GridBoard.Instance.grid.SetValue(x,y, null);
             Destroy(gameObject);
+            SoundManager.Instance.StoneDestroy();
         }
     }
 }
