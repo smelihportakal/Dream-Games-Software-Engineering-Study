@@ -46,15 +46,6 @@ public class GridBoard : MonoBehaviour
     public Dictionary<string, CubeColor> colorDictionary;
 
 
-    [System.Serializable]
-    public class Level
-    {
-        public int level_number;
-        public int grid_width;
-        public int grid_height;
-        public int move_count;
-        public string[] grid;
-    }
 
     public Level level = new Level();
 
@@ -82,7 +73,7 @@ public class GridBoard : MonoBehaviour
         }
 
         objectPooler = ObjectPooler.Instance;
-        level = JsonUtility.FromJson<Level>(textJson.text);
+        level = LevelManager.Instance.getCurrentLevel();
         width = level.grid_width;
         height = level.grid_height;
         goalManager.setMoveCount(level.move_count);
@@ -203,7 +194,8 @@ public class GridBoard : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !IsAnimationContinue)
+        // && !IsAnimationContinue
+        if (Input.GetMouseButtonDown(0) )
         {
             IsAnimationContinue = true;
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
