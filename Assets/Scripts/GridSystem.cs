@@ -1,7 +1,5 @@
 using System;
-using System.Drawing;
 using UnityEngine;
-using Color = UnityEngine.Color;
 
 public class GridBoard<T> {
     public int width;
@@ -66,19 +64,6 @@ public class GridBoard<T> {
         return new Vector2(width * cellSizeX + 0.35f, height * cellSizeY + 0.35f);
     }
     
-    public abstract class CoordinateConverter2 {
-        public abstract Vector3 GridToWorld(int x, int y, float cellSizeX, float cellSizeY, Vector3 origin);
-        
-        public abstract Vector3 GridToWorldCenter(int x, int y, float cellSizeX, float cellSizeY, Vector3 origin);
-
-        public abstract Vector2Int WorldToGrid(Vector3 worldPosition, float cellSizeX, float cellSizeY, Vector3 origin);
-
-        public abstract Vector3 Forward { get; }
-    }
-    
-    /// <summary>
-    /// A coordinate converter for vertical grids, where the grid lies on the X-Y plane.
-    /// </summary>
     public class CoordinateConverter  {
         public  Vector3 GridToWorld(int x, int y, float cellSizeX, float cellSizeY, Vector3 origin) {
             return new Vector3(x * cellSizeX + origin.x, y * cellSizeY + origin.y, origin.z);
@@ -94,7 +79,5 @@ public class GridBoard<T> {
             var y = Mathf.FloorToInt(gridPosition.y);
             return new Vector2Int(x, y);
         }
-    
-        public  Vector3 Forward => Vector3.forward;
     }
 }

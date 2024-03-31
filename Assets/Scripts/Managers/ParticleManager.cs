@@ -28,7 +28,6 @@ public class ParticleManager : MonoBehaviour
         GameObject particles = ObjectPooler.Instance.SpawnFromPool("cube_particle", GameManager.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity);
         particles.GetComponent<ParticleSystemRenderer>().material = mat;
         yield return new WaitForSecondsRealtime(1f);
-        //Debug.Log("Particle deleted");
 
         ObjectPooler.Instance.ReturnObjectToPool("cube_particle", particles);
     }
@@ -43,7 +42,6 @@ public class ParticleManager : MonoBehaviour
 
         GameObject particles = Instantiate(prefab, GameManager.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity, transform);
         yield return new WaitForSecondsRealtime(1f);
-        //Debug.Log("Particle deleted");
         Destroy(particles);
     }
     
@@ -57,7 +55,6 @@ public class ParticleManager : MonoBehaviour
 
         GameObject particles = Instantiate(prefab, GameManager.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity, transform);
         yield return new WaitForSecondsRealtime(5f);
-        //Debug.Log("Particle deleted");
         Destroy(particles);
     }
 

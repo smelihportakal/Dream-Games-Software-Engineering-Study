@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class FadePanelController : MonoBehaviour
+public class UIPanelController : MonoBehaviour
 {
     public Animator panelAnim;
-
     public Animator popupAnim;
-
     public GameObject celebrationPanel;
-    public GameObject TopUI;
-
-    public static FadePanelController Instance;
+    public static UIPanelController Instance;
     
     private void Awake()
     {
@@ -65,7 +61,6 @@ public class FadePanelController : MonoBehaviour
     IEnumerator SetStar()
     {
         yield return new WaitForSeconds(1f);
-        TopUI.SetActive(false);
         celebrationPanel.SetActive(true);
     } 
 
@@ -75,16 +70,4 @@ public class FadePanelController : MonoBehaviour
         SceneManager.LoadScene("Main");
     } 
     
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

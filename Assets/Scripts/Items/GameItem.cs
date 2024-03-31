@@ -15,7 +15,6 @@ public abstract class GameItem : MonoBehaviour
     public int y;
     public ItemType type;
     public bool moveable;
-    public bool IsBeingCleared { get;  set; }
     
     public void setCoordinate(int x , int y)
     {
@@ -63,20 +62,11 @@ public abstract class GameItem : MonoBehaviour
             yield return null;
         } while (howfar != 1);
 
-        //gameObject.SetActive(false);
         Destroy(gameObject);
     }
     
     public float Easing(float t)
     {
-        /*
-        float c1 = 1.70158f,
-            c2 = c1 * 1.525f;
-
-        return t < 0.5f
-            ? (Mathf.Pow(t * 2, 2) * ((c2 + 1) * 2 * t - c2)) / 2
-            : (Mathf.Pow(t * 2 - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
-        */
         return t < 0.5f
             ? 16 * t * t * t * t * t
             : 1 - Mathf.Pow(-2 * t + 2, 5) / 2;
@@ -86,4 +76,41 @@ public abstract class GameItem : MonoBehaviour
     {
         
     }
+    
+    public void getAdjacentItems(ref HashSet<GameItem> adjacentItems)
+    {
+        GridBoard<GameItem> grid = GameManager.Instance.grid;
+        if (x >= 0 && y - 1 >= 0)
+        {
+            if (grid.GetValue(x, y - 1) != null )
+            {
+                adjacentItems.Add(grid.GetValue(x, y - 1));
+            }
+        }
+
+        if (x >= 0 && y + 1 < grid.height)
+        {
+            if (grid.GetValue(x, y + 1) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x, y + 1));
+            }
+        }
+
+        if (x - 1 >= 0 && y >= 0)
+        {
+            if (grid.GetValue(x - 1, y) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x - 1, y));
+            }
+        }
+
+        if (x + 1 < grid.width && y < grid.height)
+        {
+            if (grid.GetValue(x + 1, y) != null)
+            {
+                adjacentItems.Add(grid.GetValue(x + 1, y));
+            }
+        }
+    }
+
 }

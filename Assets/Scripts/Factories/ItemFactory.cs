@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class ItemFactory 
 {
     protected GameObject prefab;
-    //public abstract GameItem CreateItem(string key, Vector3 position);
+
     public virtual void setGoal()
     {
         
@@ -26,6 +26,7 @@ public abstract class ItemFactory
             return null;
         }
     }
+
 }
 
 public class BoxFactory : ItemFactory 
@@ -37,22 +38,37 @@ public class BoxFactory : ItemFactory
 
     public override void setGoal()
     {
-        GoalManager.Instance.SetupGoal("bo", prefab.GetComponent<Box>().defaultSprite);
+        EndGameManager.Instance.SetupGoal("bo", prefab.GetComponent<Box>().defaultSprite);
+    }
+    
+    public override GameItem CreateItem(string key, Vector3 position)
+    {
+        setGoal();
+        GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("bo", position, Quaternion.identity);
+        Box item = itemObject.GetComponent<Box>();
+        return item;
     }
 }
 
-public class StoneFactory : ItemFactory 
+public class StoneFactory : ItemFactory
 {
     public StoneFactory(GameObject prefab)
     {
         this.prefab = prefab;
     }
-    
+
     public override void setGoal()
     {
-        GoalManager.Instance.SetupGoal("s", prefab.GetComponent<Stone>().defaultSprite);
+        EndGameManager.Instance.SetupGoal("s", prefab.GetComponent<Stone>().defaultSprite);
     }
-
+    
+    public override GameItem CreateItem(string key, Vector3 position)
+    {
+        setGoal();
+        GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("s", position, Quaternion.identity);
+        Stone item = itemObject.GetComponent<Stone>();
+        return item;
+    }
 }
 
 public class VaseFactory : ItemFactory 
@@ -64,8 +80,17 @@ public class VaseFactory : ItemFactory
     
     public override void setGoal()
     {
-        GoalManager.Instance.SetupGoal("v", prefab.GetComponent<Vase>().defaultSprite);
+        EndGameManager.Instance.SetupGoal("v", prefab.GetComponent<Vase>().defaultSprite);
     }
+    
+    public override GameItem CreateItem(string key, Vector3 position)
+    {
+        setGoal();
+        GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("v", position, Quaternion.identity);
+        Vase item = itemObject.GetComponent<Vase>();
+        return item;
+    }
+    
 
 }
 
@@ -74,6 +99,13 @@ public class TntFactory : ItemFactory
     public TntFactory(GameObject prefab)
     {
         this.prefab = prefab;
+    }
+    
+    public override GameItem CreateItem(string key, Vector3 position)
+    {
+        GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("tnt", position + new Vector3(0,0,-3), Quaternion.identity);
+        TNT item = itemObject.GetComponent<TNT>();
+        return item;
     }
 }
 

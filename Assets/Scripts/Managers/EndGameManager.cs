@@ -13,13 +13,13 @@ public class Goal
     
     public Goal(Sprite goalSprite)
     {
-        this.numberNeeded = 1;
         this.numberNeeded = 0;
+        this.numberCollected = 0;
         this.goalSprite = goalSprite;
     }
 }
 
-public class GoalManager : MonoBehaviour
+public class EndGameManager : MonoBehaviour
 {
     public Text moveCountText;
     public int moveCount;
@@ -29,7 +29,7 @@ public class GoalManager : MonoBehaviour
     public GameObject goalPrefab;
     public GameObject goalGameParent;
 
-    public static GoalManager Instance;
+    public static EndGameManager Instance;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -52,7 +52,6 @@ public class GoalManager : MonoBehaviour
         
         if (levelGoals.ContainsKey(key))
         {
-            Debug.Log("Create Goal for" + key);
             levelGoals[key].numberNeeded += 1;
             currentGoals[key].thisString = "" + levelGoals[key].numberNeeded;
         }
@@ -60,14 +59,13 @@ public class GoalManager : MonoBehaviour
         {
             levelGoals.Add(key,new Goal(goalSprite));
             GameObject goal = Instantiate(goalPrefab, goalGameParent.transform.position, goalGameParent.transform.rotation);
-            goal.transform.SetParent(goalGameParent.transform);
+            goal.transform.SetParent(goalGameParent.transform,false);
             
             GoalPanel panel = goal.GetComponent<GoalPanel>();
             panel.thisSprite = levelGoals[key].goalSprite;
             levelGoals[key].numberNeeded = 1;
             panel.thisString = "" + levelGoals[key].numberNeeded;
             currentGoals.Add(key,panel);
-
         }
     }
 
@@ -84,8 +82,9 @@ public class GoalManager : MonoBehaviour
                 Debug.Log("Goal " + key + " completed!");
                 if (CompareGoal())
                 {
+                    GameManager.Instance.IsTapEnabled = false;
                     LevelManager.Instance.updateLevel();
-                    FadePanelController.Instance.WinGame();
+                    UIPanelController.Instance.WinGame();
                     //LevelManager.Instance.goToMainMenu();
                 }
                 
@@ -124,15 +123,26 @@ public class GoalManager : MonoBehaviour
 
         if (moveCount == 0)
         {
-            if (CompareGoal())
-            {
-                LevelManager.Instance.updateLevel();
-                FadePanelController.Instance.WinGame();
-            }
-            Debug.Log("No move left");
-            FadePanelController.Instance.Fail();
-            //LevelManager.Instance.goToMainMenu();
+            GameManager.Instance.IsTapEnabled = false;
+            StartCoroutine(ControlGameFinish());
         }
         moveCountText.text = moveCount.ToString();
     }
+    
+    IEnumerator ControlGameFinish()
+    {
+        yield return new WaitForSeconds(1f);
+        if (CompareGoal())
+        {
+            LevelManager.Instance.updateLevel();
+            UIPanelController.Instance.WinGame();
+        }
+        else
+        {
+            Debug.Log("No move left");
+            UIPanelController.Instance.Fail();
+        }
+
+    }
+
 }

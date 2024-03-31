@@ -17,7 +17,6 @@ public class StartLevelButton : MonoBehaviour
         _button.onClick.AddListener(ButtonClick);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         Setup();
@@ -42,10 +41,10 @@ public class StartLevelButton : MonoBehaviour
         Debug.Log("Button Pressed");
         SceneManager.LoadScene("Level");
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         Setup();
     }
+    
 }

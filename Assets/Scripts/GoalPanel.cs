@@ -36,9 +36,4 @@ public class GoalPanel : MonoBehaviour
         goalCheckImage.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

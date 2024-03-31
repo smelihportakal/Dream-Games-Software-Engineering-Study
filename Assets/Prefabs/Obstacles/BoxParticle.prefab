@@ -64,31 +64,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7069943
+      value: 0.57357645
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7069943
+      value: -0.8191521
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 267.956
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -126,31 +126,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7069943
+      value: 0.57357645
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7069943
+      value: -0.8191521
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 267.956
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -192,31 +192,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7069943
+      value: 0.57357645
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7069943
+      value: -0.8191521
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.012612253
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 267.956
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122190954199616458, guid: 33d496ed4fde04cd0998dd8448bf7bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -10,6 +10,12 @@ public class Stone : Obstacle
     {
         moveable = false;
     }
+    
+    public override void OnTap()
+    {
+        GetComponent<Animator>().Play("Stone Shake",0);
+    }
+
 
     public override void Clear()
     {
@@ -21,10 +27,15 @@ public class Stone : Obstacle
         health -= damage;
         if (health <= 0) {
             GameManager.Instance.grid.SetValue(x,y, null);
-            GoalManager.Instance.UpdateGoal("s");
-            StartParticle();
-            Destroy(gameObject);
+            EndGameManager.Instance.UpdateGoal("s");
+            StartParticle(0);
+            Recycle();
             SoundManager.Instance.StoneDestroy();
         }
+    }
+    
+    public void Recycle()
+    {
+        ObjectPooler.Instance.ReturnObjectToPool("s", gameObject);
     }
 }

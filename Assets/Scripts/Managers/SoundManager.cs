@@ -54,4 +54,51 @@ public class SoundManager : MonoBehaviour
     {
         
     }
+    /*
+     *     public GameItem CreateGameItem(string key, Vector3 position)
+       {
+           switch (key)
+           {
+               case "b":
+                   return CreateCube(key, position);
+                   //GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("cube", position, Quaternion.identity);
+                   //Cube item = itemObject.GetComponent<Cube>();
+               case "g":
+                   return CreateCube(key, position);
+               case "y":
+                   return CreateCube(key, position);
+               case "r":
+                   return CreateCube(key, position);
+               case "rand":
+                   return CreateCube(key, position);
+               case "t":
+                   return ObjectPooler.Instance.SpawnFromPool("tnt", position, Quaternion.identity).GetComponent<TNT>();
+               case "bo":
+                   return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Box>();
+               case "s":
+                   return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Stone>();
+               case "v":
+                   return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Vase>();
+               default:
+                   return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<GameItem>();
+           }
+       }
+
+       public Cube CreateCube(string key, Vector3 position)
+       {
+           GameObject itemObject = ObjectPooler.Instance.SpawnFromPool("cube", position, Quaternion.identity);
+           Cube item = itemObject.GetComponent<Cube>();
+           switch (key)
+           {
+               case "rand":
+                   int rn = Random.Range(0, 4);
+                   item.ChangeColor(colorDictionary[new string[] { "b", "g", "r", "y" }[rn]]);
+                   return item;
+               default:
+                   item.ChangeColor(colorDictionary[key]);
+                   return item;
+           }
+       }
+
+     */
 }

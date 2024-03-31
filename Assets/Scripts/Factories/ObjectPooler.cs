@@ -79,7 +79,5 @@ public class ObjectPooler : MonoBehaviour
         
         objectToReturn.SetActive(false);
         poolDictionary[tag].Enqueue(objectToReturn);
-        
     }
-    
 }

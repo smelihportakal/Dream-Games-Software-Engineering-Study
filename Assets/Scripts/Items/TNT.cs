@@ -7,21 +7,14 @@ public class TNT : Bomb
 {
     public GameObject TntParticle;
     private IEnumerator clearCo;
-
+    
     public override void OnTap() {
-        // Logic for TNT tapping
-        // Explode in a 5x5 area
         HashSet<GameItem> adjacentItems = new HashSet<GameItem>();
-        
-        GameManager.Instance.getAdjacentItems(x,y,ref adjacentItems);
+        getAdjacentItems(ref adjacentItems);
 
         bool isComboTnt = false;
-        Debug.Log("TNT " );
-
-        
         foreach (GameItem cellItem in adjacentItems)
         {
-            Debug.Log("TNT " + cellItem.GetItemType());
             if (cellItem.GetItemType() == ItemType.Bomb)
             {
                 GameManager.Instance.clearGridCell(cellItem.x,cellItem.y);
@@ -38,36 +31,26 @@ public class TNT : Bomb
         else
         {
             Clear();
-            GameManager.Instance.IsAnimationContinue = false;
         }
+        EndGameManager.Instance.decreaseMoveCount(1);
     }
     
     private IEnumerator ClearBigTNTCoroutine()
     {
-        gameObject.transform.position += new Vector3(0,0,-6f);
-        while (gameObject.transform.localScale.x < 4f)
-        {
-            gameObject.transform.localScale += new Vector3(0.2f,0.2f,0f);
-            yield return new WaitForSeconds(0.1f);
-        }
+        transform.position += new Vector3(0,0,-3f);
+        GetComponent<Animator>().Play("TNT Explode",0);
+        yield return new WaitForSeconds(1.15f);
+        SoundManager.Instance.PlayAudio("tnt");
+        ParticleManager.Instance.StartTntParticle(x,y,TntParticle);
         GameManager.Instance.clearGridCell(x,y);
         Recycle();
         TriggerTnT(x,y, 3);
         GameManager.Instance.StartCollapseCo();
-        GameManager.Instance.IsAnimationContinue = false;
     }
 
     
     public override void Clear()
     {
-        /*
-        if (clearCo != null)
-        {
-            StopCoroutine(clearCo);
-            gameObject.transform.localScale = new Vector3(1f,1f,0);
-        }
-        */
-        IsBeingCleared = true;
         GameManager.Instance.StopCollapseCo();
         clearCo = ClearCoroutine();
         StartCoroutine(clearCo);
@@ -75,14 +58,13 @@ public class TNT : Bomb
     
     private IEnumerator ClearCoroutine()
     {
-        while (gameObject.transform.localScale.x < 1.5f)
-        {
-            gameObject.transform.localScale += new Vector3(0.1f,0.1f,0);
-            yield return new WaitForSeconds(0.1f);
-        }
+        yield return new WaitForSeconds(0.2f);
+
         ParticleManager.Instance.StartTntParticle(x,y,TntParticle);
         GameManager.Instance.clearGridCell(x,y);
+        SoundManager.Instance.PlayAudio("tnt");
         TriggerTnT(x,y, 2);
+
         Recycle();
     }
     
@@ -115,7 +97,26 @@ public class TNT : Bomb
 
     public void Recycle()
     {
-        gameObject.transform.localScale = new Vector3(1.3f, 1.3f, 0f);
+        gameObject.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
         ObjectPooler.Instance.ReturnObjectToPool("tnt", gameObject);
     }
+    
+    public override IEnumerator  MoveToPositionAndDestroy(Vector3 targetPosition, float speed)
+    {
+        Vector3 from = transform.position;
+        Vector3 to = targetPosition + new Vector3(0,0,-3);
+        float howfar = 0;
+        do
+        {
+            howfar += speed * Time.deltaTime;
+            if (howfar > 1)
+                howfar = 1;
+            
+            transform.position = Vector3.LerpUnclamped(from, to, Easing(howfar));
+            yield return null;
+        } while (howfar != 1);
+
+        Recycle();
+    }
+
 }

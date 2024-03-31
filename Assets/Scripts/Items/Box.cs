@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class Box : Obstacle
 {
-    
+    public override void OnTap()
+    {
+        GetComponent<Animator>().Play("Box Shake",0);
+    }
+
     public void Start()
     {
         moveable = false;
@@ -24,10 +28,16 @@ public class Box : Obstacle
     {
         health -= damage;
         if (health <= 0) {
+            SoundManager.Instance.PlayAudio("box");
             GameManager.Instance.grid.SetValue(x,y, null);
-            GoalManager.Instance.UpdateGoal("bo");
-            StartParticle();
-            Destroy(gameObject);
+            EndGameManager.Instance.UpdateGoal("bo");
+            StartParticle(0);
+            Recycle();
         }
+    }
+
+    public void Recycle()
+    {
+        ObjectPooler.Instance.ReturnObjectToPool("bo", gameObject);
     }
 }

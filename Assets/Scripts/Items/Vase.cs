@@ -7,8 +7,12 @@ using UnityEngine.UIElements;
 public class Vase : Obstacle
 {
     [SerializeField] Sprite[] states;
-    public bool destroyed;
-    
+
+    public override void OnTap()
+    {
+        GetComponent<Animator>().Play("Vase Shake",0);
+    }
+
     public override void Clear()
     {
         TakeDamage(1);
@@ -24,18 +28,23 @@ public class Vase : Obstacle
     {
         health -= damage;
         if (health <= 0) {
-            Debug.Log("Vase health " + health);
-            GoalManager.Instance.UpdateGoal("v");
-            if (!destroyed)
-            {
-                StartParticle();
-                GameManager.Instance.grid.SetValue(x,y, null);
-                Destroy(gameObject);
-            }
+            GameManager.Instance.clearGridCell(x,y);
+            EndGameManager.Instance.UpdateGoal("v");
+
+            StartParticle(0);
+            Recycle();
         }
         else
         {
+            StartParticle(health);
             GetComponent<SpriteRenderer>().sprite = states[states.Length - health];
+            GetComponent<Animator>().Play("Vase Shake",0);
         }
     }
+    
+    public void Recycle()
+    {
+        ObjectPooler.Instance.ReturnObjectToPool("v", gameObject);
+    }
+
 }

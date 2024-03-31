@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2880893786658037675}
   - component: {fileID: 6836194870007887915}
   - component: {fileID: -367206085738714370}
+  - component: {fileID: 6614402378187310690}
   m_Layer: 0
   m_Name: Box
   m_TagString: Untagged
@@ -103,4 +104,26 @@ MonoBehaviour:
   type: 2
   moveable: 0
   health: 0
-  ObstacleParticle: {fileID: 4858895347319072257, guid: 5f4e1f7c1eae34c27bdb2a7a266af3e4, type: 3}
+  ObstacleParticles:
+  - {fileID: 4858895347319072257, guid: 5f4e1f7c1eae34c27bdb2a7a266af3e4, type: 3}
+--- !u!95 &6614402378187310690
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3974863732090681626}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ecd08db04ff3a47a981365dc4b5f8854, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
