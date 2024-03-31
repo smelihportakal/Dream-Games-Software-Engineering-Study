@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
     private Vector3 originPosition;
     public GameObject[] cellItemPrefabs;
     public GridBoard<GameItem> grid;
-    private Dictionary<string, ItemFactory> itemFactories;
+    //private Dictionary<string, ItemFactory> itemFactories;
+    private NewItemFactory itemFactory;
     public GameObject gridBackground;
     public List<CubeColor> cubeColors;
     public Dictionary<string, CubeColor> colorDictionary;
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
             colorDictionary.Add(cubeColor.colorCode, cubeColor);
         }
         particleManager = ParticleManager.Instance;
-        InitializeFactories();
+        itemFactory = new NewItemFactory(colorDictionary);
         level = LevelManager.Instance.getCurrentLevel();
         width = level.grid_width;
         height = level.grid_height;
@@ -120,6 +121,7 @@ public class GameManager : MonoBehaviour
             transform.position.y - height * cellSizeY / 2.0f, 0);
     }
 
+    /*
     void InitializeFactories()
     {
         itemFactories = new Dictionary<string, ItemFactory>();
@@ -134,7 +136,7 @@ public class GameManager : MonoBehaviour
         itemFactories.Add("r", new CubeFactory( cellItemPrefabs[0], colorDictionary));
         itemFactories.Add("rand", new CubeFactory( cellItemPrefabs[0], colorDictionary));
     }
-    
+    */
     void InitializeGrid()
     {
         originPosition = GetOriginPosition();
@@ -189,7 +191,26 @@ public class GameManager : MonoBehaviour
 
         FindBombableCubes();
     }
-    
+    void CreateCellItem(int x, int y, string key)
+    {
+        if (itemFactory != null)
+        {
+            Vector3 position = grid.GetWorldPositionCenter(x, y);
+            //GameItem gameItem = itemFactories[key].CreateItem(key, position);
+            GameItem gameItem = itemFactory.CreateGameItem(key, position);
+
+            if (gameItem != null)
+            {
+                grid.SetValue(x, y, gameItem);
+                gameItem.setCoordinate(x, y);
+            }
+            else
+            {
+                Debug.LogError("Failed to create item for key: " + key);
+            }
+        }
+    }
+
     public void CollapseGrid()
     {
         for (int x = 0; x < width; x++)
@@ -237,23 +258,6 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    void CreateCellItem(int x, int y, string key)
-    {
-        if (itemFactories != null && itemFactories.ContainsKey(key))
-        {
-            Vector3 position = grid.GetWorldPositionCenter(x, y);
-            GameItem gameItem = itemFactories[key].CreateItem(key, position);
-            if (gameItem != null)
-            {
-                grid.SetValue(x, y, gameItem);
-                gameItem.setCoordinate(x, y);
-            }
-            else
-            {
-                Debug.LogError("Failed to create item for key: " + key);
-            }
-        }
-    }
     
     void FindBombableCubes()
     {

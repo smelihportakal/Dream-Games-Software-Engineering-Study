@@ -30,11 +30,17 @@ public class NewItemFactory
             case "t":
                 return ObjectPooler.Instance.SpawnFromPool("tnt", position, Quaternion.identity).GetComponent<TNT>();
             case "bo":
-                return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Box>();
+                Box boxItem = ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Box>();
+                EndGameManager.Instance.SetupGoal("bo", boxItem.defaultSprite);
+                return boxItem;
             case "s":
-                return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Stone>();
+                Stone stoneItem = ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Stone>();
+                EndGameManager.Instance.SetupGoal("s", stoneItem.defaultSprite);
+                return stoneItem;
             case "v":
-                return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Vase>();
+                Vase vaseItem = ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<Vase>();
+                EndGameManager.Instance.SetupGoal("v", vaseItem.defaultSprite);
+                return vaseItem;
             default:
                 return ObjectPooler.Instance.SpawnFromPool(key, position, Quaternion.identity).GetComponent<GameItem>();
         }

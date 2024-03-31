@@ -44,12 +44,12 @@ public class LevelManager : MonoBehaviour
         currentLevel += 1;
         if (currentLevel > levelFiles.Length)
         {
-            GameData.Instance.saveData.isFinished = true;
+            GameData.Instance.GetSaveData().isFinished = true;
             Debug.Log("All Levels Completed");
             GameData.Instance.Save();
             return;
         }
-        GameData.Instance.saveData.level = currentLevel;
+        GameData.Instance.GetSaveData().level = currentLevel;
         GameData.Instance.Save();
     }
 
