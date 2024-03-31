@@ -41,6 +41,20 @@ public class EndGameManager : MonoBehaviour
             Instance = this;
         }
     }
+
+    public void ClearGoals()
+    {
+        foreach (Goal goal in levelGoals.Values)
+        {
+            goal.isCompleted = false;
+            goal.numberCollected = 0;
+            goal.numberNeeded = 0;
+        }
+        foreach (GoalPanel goalPanel in currentGoals.Values)
+        {
+            goalPanel.Setup();
+        }
+    }
     
     public void SetupGoal(string key, Sprite goalSprite)
     {
@@ -54,6 +68,7 @@ public class EndGameManager : MonoBehaviour
         {
             levelGoals[key].numberNeeded += 1;
             currentGoals[key].thisString = "" + levelGoals[key].numberNeeded;
+            currentGoals[key].UpdateGoal();
         }
         else
         {

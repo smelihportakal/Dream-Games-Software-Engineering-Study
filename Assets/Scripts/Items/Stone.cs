@@ -34,8 +34,9 @@ public class Stone : Obstacle
         }
     }
     
-    public void Recycle()
+    public override void Recycle()
     {
+        health = 1;
         ObjectPooler.Instance.ReturnObjectToPool("s", gameObject);
     }
 }

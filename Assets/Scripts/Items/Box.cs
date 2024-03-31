@@ -36,8 +36,9 @@ public class Box : Obstacle
         }
     }
 
-    public void Recycle()
+    public override void Recycle()
     {
+        health = 1;
         ObjectPooler.Instance.ReturnObjectToPool("bo", gameObject);
     }
 }

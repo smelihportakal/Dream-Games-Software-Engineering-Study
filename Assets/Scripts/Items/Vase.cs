@@ -42,8 +42,10 @@ public class Vase : Obstacle
         }
     }
     
-    public void Recycle()
+    public override void Recycle()
     {
+        health = 2;
+        GetComponent<SpriteRenderer>().sprite = states[0];
         ObjectPooler.Instance.ReturnObjectToPool("v", gameObject);
     }
 

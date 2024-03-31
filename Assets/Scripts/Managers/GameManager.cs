@@ -61,7 +61,28 @@ public class GameManager : MonoBehaviour
             TapObject(gridPosition.x, gridPosition.y);
         }
     }
-
+    
+    public void RestartLevel()
+    {
+        EndGameManager.Instance.setMoveCount(level.move_count);
+        EndGameManager.Instance.ClearGoals();
+        ClearGrid();
+        PopulateGrid();
+        FindBombableCubes();
+        IsTapEnabled = true;
+    }
+    
+    private void ClearGrid()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                grid.GetValue(x, y).Recycle();
+                clearGridCell(x, y);
+            }
+        }
+    }
     public void GameFinished()
     {
         IsTapEnabled = false;
@@ -115,6 +136,13 @@ public class GameManager : MonoBehaviour
     {
         originPosition = GetOriginPosition();
         grid = GridBoard<GameItem>.Grid(width, height, cellSizeX, cellSizeY, originPosition);
+        GameObject background = Instantiate(gridBackground, transform.position + new Vector3(0,0,2), Quaternion.identity);
+        background.GetComponent<SpriteRenderer>().size = grid.GetSizeOfGrid();
+        PopulateGrid();
+    }
+
+    void PopulateGrid()
+    {
         int i = 0;
         for (int y = 0; y < height; y++)
         {
@@ -124,11 +152,9 @@ public class GameManager : MonoBehaviour
                 i++;
             }
         }
-        GameObject background = Instantiate(gridBackground, transform.position + new Vector3(0,0,2), Quaternion.identity);
-        background.GetComponent<SpriteRenderer>().size = grid.GetSizeOfGrid();
     }
 
-    public IEnumerator PopulateGrid()
+    public IEnumerator RePopulateGrid()
     {
         for (int x = 0; x < width; x++)
         for (int y = height - 1; y >= 0; y--)
@@ -185,7 +211,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        StartCoroutine(PopulateGrid());
+        StartCoroutine(RePopulateGrid());
     }
 
     IEnumerator CollapseAfterDelay()

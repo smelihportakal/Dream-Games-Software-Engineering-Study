@@ -143,4 +143,8 @@ public class Cube : GameItem
         ObjectPooler.Instance.ReturnObjectToPool("cube",gameObject);
     }
 
+    public override void Recycle()
+    {
+        ObjectPooler.Instance.ReturnObjectToPool("cube", gameObject);
+    }
 }

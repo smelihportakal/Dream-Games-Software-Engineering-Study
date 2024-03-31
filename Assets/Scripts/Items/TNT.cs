@@ -95,7 +95,7 @@ public class TNT : Bomb
         GameManager.Instance.StartCollapseCo();
     }
 
-    public void Recycle()
+    public override void Recycle()
     {
         gameObject.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
         ObjectPooler.Instance.ReturnObjectToPool("tnt", gameObject);

@@ -56,7 +56,7 @@ public class UIPanelController : MonoBehaviour
     IEnumerator GameRestart()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        GameManager.Instance.RestartLevel();
     } 
     IEnumerator SetStar()
     {

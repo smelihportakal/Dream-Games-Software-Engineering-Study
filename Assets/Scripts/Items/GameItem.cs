@@ -113,4 +113,7 @@ public abstract class GameItem : MonoBehaviour
         }
     }
 
+    public abstract void Recycle();
+
+
 }

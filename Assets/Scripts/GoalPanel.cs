@@ -17,8 +17,9 @@ public class GoalPanel : MonoBehaviour
         Setup();
     }
 
-    void Setup()
+    public void Setup()
     {
+        thisText.gameObject.SetActive(true);
         goalCheckImage.gameObject.SetActive(false);
         thisImage.sprite = thisSprite;
         thisText.text = thisString;
@@ -34,6 +35,11 @@ public class GoalPanel : MonoBehaviour
         thisText.text = "";
         thisText.gameObject.SetActive(false);
         goalCheckImage.gameObject.SetActive(true);
+    }
+
+    public void Clear()
+    {
+        Destroy(gameObject);
     }
 
 }
