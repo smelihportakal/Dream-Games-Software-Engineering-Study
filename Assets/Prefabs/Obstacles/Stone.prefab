@@ -97,7 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a18ac5ce883049a6a65b03922221cf65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultSprite: {fileID: 21300000, guid: 518720c1724f44aa2b63eee6ea398b69, type: 3}
   x: 0
   y: 0
-  type: 3
+  type: 2
+  moveable: 0
   health: 1
+  ObstacleParticle: {fileID: 5332242733388386846, guid: 03dbffeb3c780491e8c46385537204cc, type: 3}

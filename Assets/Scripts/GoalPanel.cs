@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GoalPanel : MonoBehaviour
 {
+    public Image goalCheckImage;
     public Image thisImage;
     public Sprite thisSprite;
     public Text thisText;
@@ -18,8 +19,21 @@ public class GoalPanel : MonoBehaviour
 
     void Setup()
     {
+        goalCheckImage.gameObject.SetActive(false);
         thisImage.sprite = thisSprite;
         thisText.text = thisString;
+    }
+
+    public void UpdateGoal()
+    {
+        thisText.text = thisString;
+    }
+    
+    public void CompleteGoal()
+    {
+        thisText.text = "";
+        thisText.gameObject.SetActive(false);
+        goalCheckImage.gameObject.SetActive(true);
     }
 
     // Update is called once per frame

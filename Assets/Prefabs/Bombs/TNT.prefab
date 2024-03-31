@@ -97,9 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991046a68de54e4882866843f505ce03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tag: 
+  defaultSprite: {fileID: 21300000, guid: 7d260b6befdf343d1b13225f86319eba, type: 3}
   x: 0
   y: 0
-  type: 2
+  type: 1
   moveable: 1
   TntParticle: {fileID: 8786030726235370651, guid: 2033934a83e1643f88ca400f53e7c4e6, type: 3}
