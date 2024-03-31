@@ -43,6 +43,7 @@ public class Cube : GameItem
         
         if (connectedCubes.Count <= 1)
         {
+            GetComponent<Animator>().Play("Cube Shake",0);
             return;
         }
         if (connectedCubes.Count >= 5)

@@ -54,7 +54,7 @@ public class ParticleManager : MonoBehaviour
     {
 
         GameObject particles = Instantiate(prefab, GameManager.Instance.grid.GetWorldPositionCenter(x, y), Quaternion.identity, transform);
-        yield return new WaitForSecondsRealtime(5f);
+        yield return new WaitForSecondsRealtime(3f);
         Destroy(particles);
     }
 

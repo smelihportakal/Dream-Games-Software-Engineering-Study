@@ -78,7 +78,10 @@ public class GameManager : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                grid.GetValue(x, y).Recycle();
+                if (grid.GetValue(x, y) != null)
+                {
+                    grid.GetValue(x, y).Recycle();
+                }
                 clearGridCell(x, y);
             }
         }
